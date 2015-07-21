@@ -4,8 +4,8 @@
 
 #include <errno.h>
 
-#include <node.h>
-#include <node_buffer.h>
+#include <node/node.h>
+#include <node/node_buffer.h>
 #include <v8.h>
 
 #include <qrencode.h>
@@ -63,16 +63,17 @@ struct Qrc_Png_Buffer {
 	}
 };
 
-Qrc_Params* ValidateArgs(const Arguments& args) {
+Qrc_Params* ValidateArgs(const FunctionCallbackInfo<Value>& args) {
 	struct Qrc_Params* params;
+	Isolate *isolate = args.GetIsolate();
 
 	if (args.Length() < 1 || !args[0]->IsString()) {
-		ThrowException(Exception::TypeError(String::NewFromUtf8("No source string given")));
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "No source string given")));
 		return NULL;
 	}
 	std::string data(*v8::String::Utf8Value(args[0]));
 	if (data.length() < 1 || data.length() > QRC_MAX_SIZE[0]) {
-		ThrowException(Exception::RangeError(String::NewFromUtf8("Source string length out of range")));
+		isolate->ThrowException(Exception::RangeError(String::NewFromUtf8(isolate, "Source string length out of range")));
 		return NULL;
 	}
 	params = new Qrc_Params(data);
@@ -80,109 +81,109 @@ Qrc_Params* ValidateArgs(const Arguments& args) {
 	if (args.Length() > 1) {
 		if (!args[1]->IsObject()) {
 			delete params;
-			ThrowException(Exception::TypeError(String::NewFromUtf8("Second argument must be an object")));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Second argument must be an object")));
 			return NULL;
 		}
 		Local<Object> paramsObj = Local<Object>::Cast(args[1]);
-		Local<Value> paramsVersion = paramsObj->Get(String::NewFromUtf8("version"));
+		Local<Value> paramsVersion = paramsObj->Get(String::NewFromUtf8(isolate, "version"));
 		if (!paramsVersion->IsUndefined()) {
 			if (!paramsVersion->IsInt32()) {
 				delete params;
-				ThrowException(Exception::TypeError(String::NewFromUtf8("Wrong type for version")));
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong type for version")));
 				return NULL;
 			} else if (paramsVersion->IntegerValue() < 1 || paramsVersion->IntegerValue() > QRSPEC_VERSION_MAX) {
 				delete params;
-				ThrowException(Exception::RangeError(String::NewFromUtf8("Version out of range")));
+				isolate->ThrowException(Exception::RangeError(String::NewFromUtf8(isolate, "Version out of range")));
 				return NULL;
 			} else {
 				params->version = paramsVersion->IntegerValue();
 			}
 		}
-		Local<Value> paramsEcLevel = paramsObj->Get(String::NewFromUtf8("ecLevel"));
+		Local<Value> paramsEcLevel = paramsObj->Get(String::NewFromUtf8(isolate, "ecLevel"));
 		if (!paramsEcLevel->IsUndefined()) {
 			if (!paramsEcLevel->IsInt32()) {
 				delete params;
-				ThrowException(Exception::TypeError(String::NewFromUtf8("Wrong type for EC level")));
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong type for EC level")));
 				return NULL;
 			} else if (paramsEcLevel->IntegerValue() < QR_ECLEVEL_L || paramsEcLevel->IntegerValue() > QR_ECLEVEL_H) {
 				delete params;
-				ThrowException(Exception::RangeError(String::NewFromUtf8("EC level out of range")));
+				isolate->ThrowException(Exception::RangeError(String::NewFromUtf8(isolate, "EC level out of range")));
 				return NULL;
 			} else {
 				params->ec_level = (QRecLevel) paramsEcLevel->IntegerValue();
 				if (data.length() > QRC_MAX_SIZE[params->ec_level]) {
 					delete params;
-					ThrowException(Exception::RangeError(String::NewFromUtf8("Source string length out of range")));
+					isolate->ThrowException(Exception::RangeError(String::NewFromUtf8(isolate, "Source string length out of range")));
 					return NULL;
 				}
 			}
 		}
-		Local<Value> paramsMode = paramsObj->Get(String::NewFromUtf8("mode"));
+		Local<Value> paramsMode = paramsObj->Get(String::NewFromUtf8(isolate, "mode"));
 		if (!paramsMode->IsUndefined()) {
 			if (!paramsMode->IsInt32()) {
 				delete params;
-				ThrowException(Exception::TypeError(String::NewFromUtf8("Wrong type for mode")));
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong type for mode")));
 				return NULL;
 			} else if (paramsMode->IntegerValue() < QR_MODE_NUM || paramsMode->IntegerValue() > QR_MODE_KANJI) {
 				delete params;
-				ThrowException(Exception::RangeError(String::NewFromUtf8("Mode out of range")));
+				isolate->ThrowException(Exception::RangeError(String::NewFromUtf8(isolate, "Mode out of range")));
 				return NULL;
 			} else {
 				params->mode = (QRencodeMode) paramsMode->IntegerValue();
 				// TODO check length of data
 			}
 		}
-		Local<Value> paramsDotSize = paramsObj->Get(String::NewFromUtf8("dotSize"));
+		Local<Value> paramsDotSize = paramsObj->Get(String::NewFromUtf8(isolate, "dotSize"));
 		if (!paramsDotSize->IsUndefined()) {
 			if (!paramsDotSize->IsInt32()) {
 				delete params;
-				ThrowException(Exception::TypeError(String::NewFromUtf8("Wrong type for dot size")));
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong type for dot size")));
 				return NULL;
 			} else if (paramsDotSize->IntegerValue() < 1 || paramsDotSize->IntegerValue() > 50) {
 				delete params;
-				ThrowException(Exception::RangeError(String::NewFromUtf8("Dot size out of range")));
+				isolate->ThrowException(Exception::RangeError(String::NewFromUtf8(isolate, "Dot size out of range")));
 				return NULL;
 			} else {
 				params->dot_size = paramsDotSize->IntegerValue();
 			}
 		}
-		Local<Value> paramsMargin = paramsObj->Get(String::NewFromUtf8("margin"));
+		Local<Value> paramsMargin = paramsObj->Get(String::NewFromUtf8(isolate, "margin"));
 		if (!paramsMargin->IsUndefined()) {
 			if (!paramsMargin->IsInt32()) {
 				delete params;
-				ThrowException(Exception::TypeError(String::NewFromUtf8("Wrong type for margin size")));
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong type for margin size")));
 				return NULL;
 			} else if (paramsMargin->IntegerValue() < 0 || paramsMargin->IntegerValue() > 10) {
 				delete params;
-				ThrowException(Exception::RangeError(String::NewFromUtf8("Margin size out of range")));
+				isolate->ThrowException(Exception::RangeError(String::NewFromUtf8(isolate, "Margin size out of range")));
 				return NULL;
 			} else {
 				params->margin = paramsMargin->IntegerValue();
 			}
 		}
-		Local<Value> paramsFgColor = paramsObj->Get(String::NewFromUtf8("foregroundColor"));
+		Local<Value> paramsFgColor = paramsObj->Get(String::NewFromUtf8(isolate, "foregroundColor"));
 		if (!paramsFgColor->IsUndefined()) {
 			if (!paramsFgColor->IsUint32()) {
 				delete params;
-				ThrowException(Exception::TypeError(String::NewFromUtf8("Wrong type for foreground color")));
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong type for foreground color")));
 				return NULL;
 			} else if (paramsFgColor->IntegerValue() < 0 || paramsFgColor->IntegerValue() >= WHITE) {
 				delete params;
-				ThrowException(Exception::RangeError(String::NewFromUtf8("Foreground color out of range")));
+				isolate->ThrowException(Exception::RangeError(String::NewFromUtf8(isolate, "Foreground color out of range")));
 				return NULL;
 			} else {
 				params->foreground_color = paramsFgColor->IntegerValue();
 			}
 		}
-		Local<Value> paramsBgColor = paramsObj->Get(String::NewFromUtf8("backgroundColor"));
+		Local<Value> paramsBgColor = paramsObj->Get(String::NewFromUtf8(isolate, "backgroundColor"));
 		if (!paramsBgColor->IsUndefined()) {
 			if (!paramsBgColor->IsUint32()) {
 				delete params;
-				ThrowException(Exception::TypeError(String::NewFromUtf8("Wrong type for background color")));
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong type for background color")));
 				return NULL;
 			} else if (paramsBgColor->IntegerValue() < 0 || paramsBgColor->IntegerValue() >= WHITE) {
 				delete params;
-				ThrowException(Exception::RangeError(String::NewFromUtf8("Background color out of range")));
+				isolate->ThrowException(Exception::RangeError(String::NewFromUtf8(isolate, "Background color out of range")));
 				return NULL;
 			} else {
 				params->background_color = paramsBgColor->IntegerValue();
@@ -194,25 +195,25 @@ Qrc_Params* ValidateArgs(const Arguments& args) {
 }
 
 
-QRcode* Encode(Qrc_Params* params) {
+QRcode* Encode(Isolate *isolate, Qrc_Params* params) {
 	QRinput *input;
 	if ((input = QRinput_new2(params->version, params->ec_level)) == NULL) {
 		if (errno == EINVAL) {
-			ThrowException(Exception::Error(String::NewFromUtf8("Input data is invalid")));
+			isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Input data is invalid")));
 			return NULL;
 		}
 		if (errno == ENOMEM) {
-			ThrowException(Exception::Error(String::NewFromUtf8("Not enough memory")));
+			isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Not enough memory")));
 			return NULL;
 		}
 	}
 	if (QRinput_append(input, params->mode, strlen((const char *)params->data), params->data) == -1) {
 		if (errno == EINVAL) {
-			ThrowException(Exception::Error(String::NewFromUtf8("Input data is invalid")));
+			isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Input data is invalid")));
 			return NULL;
 		}
 		if (errno == ENOMEM) {
-			ThrowException(Exception::Error(String::NewFromUtf8("Not enough memory")));
+			isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Not enough memory")));
 			return NULL;
 		}
 	}
@@ -220,7 +221,7 @@ QRcode* Encode(Qrc_Params* params) {
 	QRinput_free(input);
 
 	if (code == NULL) {
-		ThrowException(Exception::Error(String::NewFromUtf8("Could not encode input")));
+		isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Could not encode input")));
 		return NULL;
 	}
 
@@ -228,25 +229,27 @@ QRcode* Encode(Qrc_Params* params) {
 }
 
 
-Handle<Value> EncodeBuf(const Arguments& args) {
-	HandleScope scope;
-	Local<Object> codeObj = Object::New();
+void EncodeBuf(const FunctionCallbackInfo<Value>& args) {
+	Isolate *isolate = args.GetIsolate();
+	HandleScope scope(isolate);
+	Local<Object> codeObj = Object::New(isolate);
 
 	Qrc_Params* params = ValidateArgs(args);
 	if (!params) {
-		return scope.Close(codeObj);
+		args.GetReturnValue().Set(codeObj);
+		return;
 	}
 
-	QRcode* code = Encode(params);
+	QRcode* code = Encode(isolate, params);
 	delete params;
 	if (code) {
-		Local<node::Buffer> buffer = node::Buffer::New((const char*)code->data, code->width * code->width);
-		codeObj->Set(String::NewSymbol("width"), Integer::New(code->width));
-		codeObj->Set(String::NewSymbol("version"), Integer::New(code->version));
-		codeObj->Set(String::NewSymbol("data"), buffer->handle_);
+		codeObj->Set(String::NewFromUtf8(isolate, "width", String::kInternalizedString), Integer::New(isolate, code->width));
+		codeObj->Set(String::NewFromUtf8(isolate, "version", String::kInternalizedString), Integer::New(isolate, code->version));
+		Local<Object> buffer = node::Buffer::New(isolate, (const char*)code->data, code->width * code->width);
+		codeObj->Set(String::NewFromUtf8(isolate, "data", String::kInternalizedString), buffer);
 		QRcode_free(code);
 	}
-	return scope.Close(codeObj);
+	args.GetReturnValue().Set(codeObj);
 }
 
 
@@ -267,17 +270,18 @@ void Qrc_png_write_buffer(png_structp png_ptr, png_bytep data, png_size_t length
 }
 
 
-Handle<Value> EncodePNG(const Arguments& args) {
-	HandleScope scope;
-	Local<Object> obj = Object::New();
+void EncodePNG(const FunctionCallbackInfo<Value>& args) {
+	Isolate *isolate = args.GetIsolate();
+	HandleScope scope(isolate);
+	Local<Object> obj = Object::New(isolate);
 
 	Qrc_Params* params = ValidateArgs(args);
 	if (!params) {
-		return scope.Close(obj);
+		args.GetReturnValue().Set(obj);
+		return;
 	}
 
-	QRcode *code = Encode(params);
-
+	QRcode *code = Encode(isolate, params);
 	if (code) {
 		Qrc_Png_Buffer* bp = new Qrc_Png_Buffer();
 
@@ -290,7 +294,8 @@ Handle<Value> EncodePNG(const Arguments& args) {
 		if (!png_ptr) {
 			delete params;
 			QRcode_free(code);
-			return scope.Close(obj);
+			args.GetReturnValue().Set(obj);
+			return;
 		}
 
 		info_ptr = png_create_info_struct(png_ptr);
@@ -298,14 +303,16 @@ Handle<Value> EncodePNG(const Arguments& args) {
 			png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
 			delete params;
 			QRcode_free(code);
-			return scope.Close(obj);
+			args.GetReturnValue().Set(obj);
+			return;
 		}
 
 		if (setjmp(png_jmpbuf(png_ptr))) {
 			png_destroy_write_struct(&png_ptr, &info_ptr);
 			delete params;
 			QRcode_free(code);
-			return scope.Close(obj);
+			args.GetReturnValue().Set(obj);
+			return;
 		}
 
 		png_set_write_fn(png_ptr, bp, Qrc_png_write_buffer, NULL);
@@ -351,22 +358,20 @@ Handle<Value> EncodePNG(const Arguments& args) {
 		delete[] row;
 		free(png_plte);
 
-		Local<node::Buffer> buffer = node::Buffer::New(bp->data, bp->size);
-		obj->Set(String::NewSymbol("width"), Integer::New(code->width));
-		obj->Set(String::NewSymbol("version"), Integer::New(code->version));
-		obj->Set(String::NewSymbol("data"), buffer->handle_);
+		obj->Set(String::NewFromUtf8(isolate, "width", String::kInternalizedString), Integer::New(isolate, code->width));
+		obj->Set(String::NewFromUtf8(isolate, "version", String::kInternalizedString), Integer::New(isolate, code->version));
+		Local<Object> buffer = node::Buffer::New(isolate, bp->data, bp->size);
+		obj->Set(String::NewFromUtf8(isolate, "data", String::kInternalizedString), buffer);
 		QRcode_free(code);
 		delete bp;
 	}
 	delete params;
-	return scope.Close(obj);
+	args.GetReturnValue().Set(obj);
 }
 
 void init(Handle<Object> exports) {
-	exports->Set(String::NewSymbol("encode"),
-			FunctionTemplate::New(EncodeBuf)->GetFunction());
-	exports->Set(String::NewSymbol("encodePng"),
-			FunctionTemplate::New(EncodePNG)->GetFunction());
+	NODE_SET_METHOD(exports, "encode", EncodeBuf);
+	NODE_SET_METHOD(exports, "encodePng", EncodePNG);
 }
 
 NODE_MODULE(qrc, init)
