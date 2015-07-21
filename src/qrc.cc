@@ -67,12 +67,12 @@ Qrc_Params* ValidateArgs(const Arguments& args) {
 	struct Qrc_Params* params;
 
 	if (args.Length() < 1 || !args[0]->IsString()) {
-		ThrowException(Exception::TypeError(String::New("No source string given")));
+		ThrowException(Exception::TypeError(String::NewFromUtf8("No source string given")));
 		return NULL;
 	}
 	std::string data(*v8::String::Utf8Value(args[0]));
 	if (data.length() < 1 || data.length() > QRC_MAX_SIZE[0]) {
-		ThrowException(Exception::RangeError(String::New("Source string length out of range")));
+		ThrowException(Exception::RangeError(String::NewFromUtf8("Source string length out of range")));
 		return NULL;
 	}
 	params = new Qrc_Params(data);
@@ -80,109 +80,109 @@ Qrc_Params* ValidateArgs(const Arguments& args) {
 	if (args.Length() > 1) {
 		if (!args[1]->IsObject()) {
 			delete params;
-			ThrowException(Exception::TypeError(String::New("Second argument must be an object")));
+			ThrowException(Exception::TypeError(String::NewFromUtf8("Second argument must be an object")));
 			return NULL;
 		}
 		Local<Object> paramsObj = Local<Object>::Cast(args[1]);
-		Local<Value> paramsVersion = paramsObj->Get(String::New("version"));
+		Local<Value> paramsVersion = paramsObj->Get(String::NewFromUtf8("version"));
 		if (!paramsVersion->IsUndefined()) {
 			if (!paramsVersion->IsInt32()) {
 				delete params;
-				ThrowException(Exception::TypeError(String::New("Wrong type for version")));
+				ThrowException(Exception::TypeError(String::NewFromUtf8("Wrong type for version")));
 				return NULL;
 			} else if (paramsVersion->IntegerValue() < 1 || paramsVersion->IntegerValue() > QRSPEC_VERSION_MAX) {
 				delete params;
-				ThrowException(Exception::RangeError(String::New("Version out of range")));
+				ThrowException(Exception::RangeError(String::NewFromUtf8("Version out of range")));
 				return NULL;
 			} else {
 				params->version = paramsVersion->IntegerValue();
 			}
 		}
-		Local<Value> paramsEcLevel = paramsObj->Get(String::New("ecLevel"));
+		Local<Value> paramsEcLevel = paramsObj->Get(String::NewFromUtf8("ecLevel"));
 		if (!paramsEcLevel->IsUndefined()) {
 			if (!paramsEcLevel->IsInt32()) {
 				delete params;
-				ThrowException(Exception::TypeError(String::New("Wrong type for EC level")));
+				ThrowException(Exception::TypeError(String::NewFromUtf8("Wrong type for EC level")));
 				return NULL;
 			} else if (paramsEcLevel->IntegerValue() < QR_ECLEVEL_L || paramsEcLevel->IntegerValue() > QR_ECLEVEL_H) {
 				delete params;
-				ThrowException(Exception::RangeError(String::New("EC level out of range")));
+				ThrowException(Exception::RangeError(String::NewFromUtf8("EC level out of range")));
 				return NULL;
 			} else {
 				params->ec_level = (QRecLevel) paramsEcLevel->IntegerValue();
 				if (data.length() > QRC_MAX_SIZE[params->ec_level]) {
 					delete params;
-					ThrowException(Exception::RangeError(String::New("Source string length out of range")));
+					ThrowException(Exception::RangeError(String::NewFromUtf8("Source string length out of range")));
 					return NULL;
 				}
 			}
 		}
-		Local<Value> paramsMode = paramsObj->Get(String::New("mode"));
+		Local<Value> paramsMode = paramsObj->Get(String::NewFromUtf8("mode"));
 		if (!paramsMode->IsUndefined()) {
 			if (!paramsMode->IsInt32()) {
 				delete params;
-				ThrowException(Exception::TypeError(String::New("Wrong type for mode")));
+				ThrowException(Exception::TypeError(String::NewFromUtf8("Wrong type for mode")));
 				return NULL;
 			} else if (paramsMode->IntegerValue() < QR_MODE_NUM || paramsMode->IntegerValue() > QR_MODE_KANJI) {
 				delete params;
-				ThrowException(Exception::RangeError(String::New("Mode out of range")));
+				ThrowException(Exception::RangeError(String::NewFromUtf8("Mode out of range")));
 				return NULL;
 			} else {
 				params->mode = (QRencodeMode) paramsMode->IntegerValue();
 				// TODO check length of data
 			}
 		}
-		Local<Value> paramsDotSize = paramsObj->Get(String::New("dotSize"));
+		Local<Value> paramsDotSize = paramsObj->Get(String::NewFromUtf8("dotSize"));
 		if (!paramsDotSize->IsUndefined()) {
 			if (!paramsDotSize->IsInt32()) {
 				delete params;
-				ThrowException(Exception::TypeError(String::New("Wrong type for dot size")));
+				ThrowException(Exception::TypeError(String::NewFromUtf8("Wrong type for dot size")));
 				return NULL;
 			} else if (paramsDotSize->IntegerValue() < 1 || paramsDotSize->IntegerValue() > 50) {
 				delete params;
-				ThrowException(Exception::RangeError(String::New("Dot size out of range")));
+				ThrowException(Exception::RangeError(String::NewFromUtf8("Dot size out of range")));
 				return NULL;
 			} else {
 				params->dot_size = paramsDotSize->IntegerValue();
 			}
 		}
-		Local<Value> paramsMargin = paramsObj->Get(String::New("margin"));
+		Local<Value> paramsMargin = paramsObj->Get(String::NewFromUtf8("margin"));
 		if (!paramsMargin->IsUndefined()) {
 			if (!paramsMargin->IsInt32()) {
 				delete params;
-				ThrowException(Exception::TypeError(String::New("Wrong type for margin size")));
+				ThrowException(Exception::TypeError(String::NewFromUtf8("Wrong type for margin size")));
 				return NULL;
 			} else if (paramsMargin->IntegerValue() < 0 || paramsMargin->IntegerValue() > 10) {
 				delete params;
-				ThrowException(Exception::RangeError(String::New("Margin size out of range")));
+				ThrowException(Exception::RangeError(String::NewFromUtf8("Margin size out of range")));
 				return NULL;
 			} else {
 				params->margin = paramsMargin->IntegerValue();
 			}
 		}
-		Local<Value> paramsFgColor = paramsObj->Get(String::New("foregroundColor"));
+		Local<Value> paramsFgColor = paramsObj->Get(String::NewFromUtf8("foregroundColor"));
 		if (!paramsFgColor->IsUndefined()) {
 			if (!paramsFgColor->IsUint32()) {
 				delete params;
-				ThrowException(Exception::TypeError(String::New("Wrong type for foreground color")));
+				ThrowException(Exception::TypeError(String::NewFromUtf8("Wrong type for foreground color")));
 				return NULL;
 			} else if (paramsFgColor->IntegerValue() < 0 || paramsFgColor->IntegerValue() >= WHITE) {
 				delete params;
-				ThrowException(Exception::RangeError(String::New("Foreground color out of range")));
+				ThrowException(Exception::RangeError(String::NewFromUtf8("Foreground color out of range")));
 				return NULL;
 			} else {
 				params->foreground_color = paramsFgColor->IntegerValue();
 			}
 		}
-		Local<Value> paramsBgColor = paramsObj->Get(String::New("backgroundColor"));
+		Local<Value> paramsBgColor = paramsObj->Get(String::NewFromUtf8("backgroundColor"));
 		if (!paramsBgColor->IsUndefined()) {
 			if (!paramsBgColor->IsUint32()) {
 				delete params;
-				ThrowException(Exception::TypeError(String::New("Wrong type for background color")));
+				ThrowException(Exception::TypeError(String::NewFromUtf8("Wrong type for background color")));
 				return NULL;
 			} else if (paramsBgColor->IntegerValue() < 0 || paramsBgColor->IntegerValue() >= WHITE) {
 				delete params;
-				ThrowException(Exception::RangeError(String::New("Background color out of range")));
+				ThrowException(Exception::RangeError(String::NewFromUtf8("Background color out of range")));
 				return NULL;
 			} else {
 				params->background_color = paramsBgColor->IntegerValue();
@@ -198,21 +198,21 @@ QRcode* Encode(Qrc_Params* params) {
 	QRinput *input;
 	if ((input = QRinput_new2(params->version, params->ec_level)) == NULL) {
 		if (errno == EINVAL) {
-			ThrowException(Exception::Error(String::New("Input data is invalid")));
+			ThrowException(Exception::Error(String::NewFromUtf8("Input data is invalid")));
 			return NULL;
 		}
 		if (errno == ENOMEM) {
-			ThrowException(Exception::Error(String::New("Not enough memory")));
+			ThrowException(Exception::Error(String::NewFromUtf8("Not enough memory")));
 			return NULL;
 		}
 	}
 	if (QRinput_append(input, params->mode, strlen((const char *)params->data), params->data) == -1) {
 		if (errno == EINVAL) {
-			ThrowException(Exception::Error(String::New("Input data is invalid")));
+			ThrowException(Exception::Error(String::NewFromUtf8("Input data is invalid")));
 			return NULL;
 		}
 		if (errno == ENOMEM) {
-			ThrowException(Exception::Error(String::New("Not enough memory")));
+			ThrowException(Exception::Error(String::NewFromUtf8("Not enough memory")));
 			return NULL;
 		}
 	}
@@ -220,7 +220,7 @@ QRcode* Encode(Qrc_Params* params) {
 	QRinput_free(input);
 
 	if (code == NULL) {
-		ThrowException(Exception::Error(String::New("Could not encode input")));
+		ThrowException(Exception::Error(String::NewFromUtf8("Could not encode input")));
 		return NULL;
 	}
 
