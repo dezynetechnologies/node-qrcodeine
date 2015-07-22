@@ -30,10 +30,10 @@ Usage
     var qrPngBuffer = qr.encodePng('Some text to put in a QR Code PNG');
 
     // of course there are some options:
-    var qrPngBuffer = qr.encodePng('Test', {
+    var qrPngBuffer = qr.encodePng('FOO123', {
       version: 4,
       ecLevel: qr.EC_H,
-      mode: qr.MODE_NUM,
+      mode: qr.MODE_AN,
       dotSize: 5,
       margin: 2,
       foregroundColor: 0xFF0000,
