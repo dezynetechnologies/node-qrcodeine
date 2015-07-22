@@ -1,6 +1,12 @@
-node-qrc
-========
-QR Code generation in Node.js using libqrencode and libpng
+node-qrcodeine
+==============
+QR Code generator for Node.js using `libqrencode` and `libpng`. This Node.js
+module is a fork from [qrc](https://www.npmjs.com/package/qrc) which brings it
+to Node.js v0.12.x and adds some customizations.
+
+As opposed to many QR code generators, `qrcodeine` can be passed very specific
+options, including not only the error correction level or the QR code version
+but also the QR code mode (numeral, alphanumeric, 8-bit binary, Kanji).
 
 Requirements
 ------------
@@ -9,24 +15,25 @@ Requirements
 
 Installation
 ------------
-1) Install libpng(-dev) and libqrencode(-dev) using the package manager of your
-choice.
+1) Install `libpng(-dev)` and `libqrencode(-dev)` using the package manager of
+your choice.
 
-2) `npm install qrc`
+2) `npm install qrcodeine`
 
 Usage
 -----
 
-    var qrc = require('qrc');
+    var qr = require('qrcodeine');
 
-    var qrBuffer = qrc.encode('Some text to put in a QR Code');
+    var qrBuffer = qr.encode('Some text to put in a QR Code');
     // or:
-    var qrPngBuffer = qrc.encodePng('Some text to put in a QR Code PNG');
+    var qrPngBuffer = qr.encodePng('Some text to put in a QR Code PNG');
 
     // of course there are some options:
-    var qrPngBuffer = qrc.encodePng('Test', {
+    var qrPngBuffer = qr.encodePng('Test', {
       version: 4,
-      ecLevel: qrc.EC_H,
+      ecLevel: qr.EC_H,
+      mode: qr.MODE_NUM,
       dotSize: 5,
       margin: 2,
       foregroundColor: 0xFF0000,
@@ -66,6 +73,7 @@ QR Code is a registered trademark of
 License
 -------
 Copyright (C) 2013 Tobias Muellerleile <muellerleile@hrz.uni-marburg.de>
+
 Copyright (C) 2015 Net Oxygen Sàrl <info@netoxygen.ch>
 
 This library is free software; you can redistribute it and/or modify it under

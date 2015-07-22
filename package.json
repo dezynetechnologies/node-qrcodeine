@@ -1,7 +1,7 @@
 {
-  "name": "qrc",
-  "version": "0.1.0",
-  "description": "Native bindings for libqrencode & libpng",
+  "name": "qrcodeine",
+  "version": "1.0.0",
+  "description": "QR Code generator using libqrencode",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha",
@@ -9,22 +9,24 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/hrz-unimr/node-qrc.git"
+    "url": "https://github.com/netoxygen/node-qrcodeine.git"
   },
   "keywords": [
     "QR",
     "QR code",
     "qrcode",
     "barcode",
-    "2D code"
+    "2D code",
+    "libqrencode",
+    "qrencode"
   ],
-  "author": "Tobias Muellerleile <muellerleile@hrz.uni-marburg.de>",
-  "license": "LGPL",
+  "author": "Net Oxygen Sàrl <info@netoxygen.ch> (https://netoxygen.ch)",
+  "license": "LGPL-2.1",
   "gypfile": true,
   "dependencies": {
-    "bindings": "1.1.0"
+    "bindings": "1.2.1"
   },
   "devDependencies": {
-    "mocha": "1.10.0"
+    "mocha": "2.2.5"
   }
 }

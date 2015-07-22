@@ -1,31 +1,31 @@
 /* global suite: false, test: false */
 var assert = require('assert');
 var crypto = require('crypto');
-var qrc = require('../');
+var qr = require('../');
 
 suite('Validation of input params', function () {
   test('version', function () {
     assert.throws(
       function () {
-        qrc.encode('TEST', { version: -1 });
+        qr.encode('TEST', { version: -1 });
       },
       /Version out of range/
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { version: 41 });
+        qr.encode('TEST', { version: 41 });
       },
       /Version out of range/
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { version: 1.5 });
+        qr.encode('TEST', { version: 1.5 });
       },
       /Wrong type for version/
     );
     assert.doesNotThrow(
       function () {
-        qrc.encode('TEST', { version: 1 });
+        qr.encode('TEST', { version: 1 });
       }
     );
   });
@@ -33,25 +33,25 @@ suite('Validation of input params', function () {
   test('EC level', function () {
     assert.throws(
       function () {
-        qrc.encode('TEST', { ecLevel: qrc.EC_L - 1 });
+        qr.encode('TEST', { ecLevel: qr.EC_L - 1 });
       },
       /EC level out of range/
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { ecLevel: qrc.EC_H + 1 });
+        qr.encode('TEST', { ecLevel: qr.EC_H + 1 });
       },
       /EC level out of range/
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { ecLevel: qrc.EC_L + 0.5 });
+        qr.encode('TEST', { ecLevel: qr.EC_L + 0.5 });
       },
       /Wrong type for EC level/
     );
     assert.doesNotThrow(
       function () {
-        qrc.encode('TEST', { ecLevel: qrc.EC_H });
+        qr.encode('TEST', { ecLevel: qr.EC_H });
       }
     );
   });
@@ -59,25 +59,25 @@ suite('Validation of input params', function () {
   test('mode', function () {
     assert.throws(
       function () {
-        qrc.encode('TEST', { mode: qrc.MODE_NUM - 1 });
+        qr.encode('TEST', { mode: qr.MODE_NUM - 1 });
       },
       /Mode out of range/
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { mode: qrc.MODE_KANJI + 1 });
+        qr.encode('TEST', { mode: qr.MODE_KANJI + 1 });
       },
       /Mode out of range/
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { mode: qrc.MODE_NUM + 0.5 });
+        qr.encode('TEST', { mode: qr.MODE_NUM + 0.5 });
       },
       /Wrong type for mode/
     );
     assert.doesNotThrow(
       function () {
-        qrc.encode('TEST', { mode: qrc.MODE_AN });
+        qr.encode('TEST', { mode: qr.MODE_AN });
       }
     );
   });
@@ -85,25 +85,25 @@ suite('Validation of input params', function () {
   test('dot size', function () {
     assert.throws(
       function () {
-        qrc.encode('TEST', { dotSize: 0 });
+        qr.encode('TEST', { dotSize: 0 });
       },
       /Dot size out of range/
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { dotSize: 51 });
+        qr.encode('TEST', { dotSize: 51 });
       },
       /Dot size out of range/
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { dotSize: 10.5 });
+        qr.encode('TEST', { dotSize: 10.5 });
       },
       /Wrong type for dot size/
     );
     assert.doesNotThrow(
       function () {
-        qrc.encode('TEST', { dotSize: 10 });
+        qr.encode('TEST', { dotSize: 10 });
       }
     );
   });
@@ -111,25 +111,25 @@ suite('Validation of input params', function () {
   test('margin', function () {
     assert.throws(
       function () {
-        qrc.encode('TEST', { margin: -1 });
+        qr.encode('TEST', { margin: -1 });
       },
       /Margin size out of range/
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { margin: 11 });
+        qr.encode('TEST', { margin: 11 });
       },
       /Margin size out of range/
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { margin: 5.5 });
+        qr.encode('TEST', { margin: 5.5 });
       },
       /Wrong type for margin size/
     );
     assert.doesNotThrow(
       function () {
-        qrc.encode('TEST', { margin: 5 });
+        qr.encode('TEST', { margin: 5 });
       }
     );
   });
@@ -137,48 +137,48 @@ suite('Validation of input params', function () {
   test('foreground & background color', function () {
     assert.throws(
       function () {
-        qrc.encode('TEST', { foregroundColor: -1 });
+        qr.encode('TEST', { foregroundColor: -1 });
       },
       /Wrong type for foreground color/
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { foregroundColor: 0xFFFFFF + 1 });
+        qr.encode('TEST', { foregroundColor: 0xFFFFFF + 1 });
       },
       /Foreground color out of range/
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { foregroundColor: 5.5 });
+        qr.encode('TEST', { foregroundColor: 5.5 });
       },
       /Wrong type for foreground color/
     );
     assert.doesNotThrow(
       function () {
-        qrc.encode('TEST', { foregroundColor: 0x000000 });
+        qr.encode('TEST', { foregroundColor: 0x000000 });
       }
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { backgroundColor: -1 });
+        qr.encode('TEST', { backgroundColor: -1 });
       },
       /Wrong type for background color/
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { backgroundColor: 0xFFFFFF + 1 });
+        qr.encode('TEST', { backgroundColor: 0xFFFFFF + 1 });
       },
       /Background color out of range/
     );
     assert.throws(
       function () {
-        qrc.encode('TEST', { backgroundColor: 5.5 });
+        qr.encode('TEST', { backgroundColor: 5.5 });
       },
       /Wrong type for background color/
     );
     assert.doesNotThrow(
       function () {
-        qrc.encode('TEST', { backgroundColor: 0xFFFFFF });
+        qr.encode('TEST', { backgroundColor: 0xFFFFFF });
       }
     );
   });
@@ -186,7 +186,7 @@ suite('Validation of input params', function () {
 
 suite('Encode to buffer', function () {
   test('baseline', function() {
-    var act = qrc.encode('TEST');
+    var act = qr.encode('TEST');
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -196,7 +196,7 @@ suite('Encode to buffer', function () {
   });
 
   test('explicitly set version', function() {
-    var act = qrc.encode('TEST', { version: 4 });
+    var act = qr.encode('TEST', { version: 4 });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 4);
     assert.strictEqual(act.width, 33);
@@ -206,7 +206,7 @@ suite('Encode to buffer', function () {
   });
 
   test('explicitly set EC level(L)', function() {
-    var act = qrc.encode('TEST', { ecLevel: qrc.EC_L });
+    var act = qr.encode('TEST', { ecLevel: qr.EC_L });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -216,7 +216,7 @@ suite('Encode to buffer', function () {
   });
 
   test('explicitly set EC level(M)', function() {
-    var act = qrc.encode('TEST', { ecLevel: qrc.EC_M });
+    var act = qr.encode('TEST', { ecLevel: qr.EC_M });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -226,7 +226,7 @@ suite('Encode to buffer', function () {
   });
 
   test('explicitly set EC level(Q)', function() {
-    var act = qrc.encode('TEST', { ecLevel: qrc.EC_Q });
+    var act = qr.encode('TEST', { ecLevel: qr.EC_Q });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -236,7 +236,7 @@ suite('Encode to buffer', function () {
   });
 
   test('explicitly set EC level(H)', function() {
-    var act = qrc.encode('TEST', { ecLevel: qrc.EC_H });
+    var act = qr.encode('TEST', { ecLevel: qr.EC_H });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -246,7 +246,7 @@ suite('Encode to buffer', function () {
   });
 
   test('explicitly set mode(NUM)', function() {
-    var act = qrc.encode('1234', { mode: qrc.MODE_NUM });
+    var act = qr.encode('1234', { mode: qr.MODE_NUM });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -256,7 +256,7 @@ suite('Encode to buffer', function () {
   });
 
   test('explicitly set mode(AN)', function() {
-    var act = qrc.encode('FOO1234', { mode: qrc.MODE_AN });
+    var act = qr.encode('FOO1234', { mode: qr.MODE_AN });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -266,7 +266,7 @@ suite('Encode to buffer', function () {
   });
 
   test('explicitly set mode(8)', function() {
-    var act = qrc.encode('FOO1234', { mode: qrc.MODE_8 });
+    var act = qr.encode('FOO1234', { mode: qr.MODE_8 });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -278,7 +278,7 @@ suite('Encode to buffer', function () {
 
 suite('Encode to PNG buffer', function () {
   test('baseline', function() {
-    var act = qrc.encodePng('TEST');
+    var act = qr.encodePng('TEST');
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -288,7 +288,7 @@ suite('Encode to PNG buffer', function () {
   });
 
   test('explicitly set version', function() {
-    var act = qrc.encodePng('TEST', { version: 4 });
+    var act = qr.encodePng('TEST', { version: 4 });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 4);
     assert.strictEqual(act.width, 33);
@@ -298,7 +298,7 @@ suite('Encode to PNG buffer', function () {
   });
 
   test('explicitly set EC level(L)', function() {
-    var act = qrc.encodePng('TEST', { ecLevel: qrc.EC_L });
+    var act = qr.encodePng('TEST', { ecLevel: qr.EC_L });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -308,7 +308,7 @@ suite('Encode to PNG buffer', function () {
   });
 
   test('explicitly set EC level(M)', function() {
-    var act = qrc.encodePng('TEST', { ecLevel: qrc.EC_M });
+    var act = qr.encodePng('TEST', { ecLevel: qr.EC_M });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -318,7 +318,7 @@ suite('Encode to PNG buffer', function () {
   });
 
   test('explicitly set EC level(Q)', function() {
-    var act = qrc.encodePng('TEST', { ecLevel: qrc.EC_Q });
+    var act = qr.encodePng('TEST', { ecLevel: qr.EC_Q });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -328,7 +328,7 @@ suite('Encode to PNG buffer', function () {
   });
 
   test('explicitly set EC level(H)', function() {
-    var act = qrc.encodePng('TEST', { ecLevel: qrc.EC_H });
+    var act = qr.encodePng('TEST', { ecLevel: qr.EC_H });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -338,7 +338,7 @@ suite('Encode to PNG buffer', function () {
   });
 
   test('explicitly set mode(NUM)', function() {
-    var act = qrc.encodePng('1234', { mode: qrc.MODE_NUM });
+    var act = qr.encodePng('1234', { mode: qr.MODE_NUM });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -348,7 +348,7 @@ suite('Encode to PNG buffer', function () {
   });
 
   test('explicitly set mode(AN)', function() {
-    var act = qrc.encodePng('FOO1234', { mode: qrc.MODE_AN });
+    var act = qr.encodePng('FOO1234', { mode: qr.MODE_AN });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -358,7 +358,7 @@ suite('Encode to PNG buffer', function () {
   });
 
   test('explicitly set mode(8)', function() {
-    var act = qrc.encodePng('FOO1234', { mode: qrc.MODE_8 });
+    var act = qr.encodePng('FOO1234', { mode: qr.MODE_8 });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -368,7 +368,7 @@ suite('Encode to PNG buffer', function () {
   });
 
   test('explicitly set dot size', function() {
-    var act = qrc.encodePng('TEST', { dotSize: 10 });
+    var act = qr.encodePng('TEST', { dotSize: 10 });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -378,7 +378,7 @@ suite('Encode to PNG buffer', function () {
   });
 
   test('explicitly set margin', function() {
-    var act = qrc.encodePng('TEST', { margin: 2 });
+    var act = qr.encodePng('TEST', { margin: 2 });
     var hash = crypto.createHash('sha1');
     assert.strictEqual(act.version, 1);
     assert.strictEqual(act.width, 21);
@@ -388,7 +388,7 @@ suite('Encode to PNG buffer', function () {
   });
 
   test('explicitly set colors', function() {
-    var act = qrc.encodePng('TEST', {
+    var act = qr.encodePng('TEST', {
       foregroundColor: 0xFF0000,
       backgroundColor: 0x00FF00
     });

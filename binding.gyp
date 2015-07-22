@@ -1,8 +1,8 @@
 {
   'targets': [
     {
-      'target_name': 'qrc',
-      'sources': [ 'src/qrc.cc' ],
+      'target_name': 'qrcodeine',
+      'sources': [ 'src/qrcodeine.cc' ],
       'libraries': ['-lqrencode', '-lpng']
     }
   ]
