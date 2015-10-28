@@ -230,7 +230,7 @@ QRcode* Encode(Isolate *isolate, Qrc_Params* params) {
 
 
 void EncodeBuf(const FunctionCallbackInfo<Value>& args) {
-	Isolate *isolate = args.GetIsolate();
+	v8::Isolate *isolate = args.GetIsolate();
 	HandleScope scope(isolate);
 	Local<Object> codeObj = Object::New(isolate);
 
@@ -245,7 +245,7 @@ void EncodeBuf(const FunctionCallbackInfo<Value>& args) {
 	if (code) {
 		codeObj->Set(String::NewFromUtf8(isolate, "width", String::kInternalizedString), Integer::New(isolate, code->width));
 		codeObj->Set(String::NewFromUtf8(isolate, "version", String::kInternalizedString), Integer::New(isolate, code->version));
-		Local<Object> buffer = node::Buffer::New(isolate, (const char*)code->data, code->width * code->width);
+		Local<Object> buffer = node::Buffer::New(isolate, (char*)code->data, code->width * code->width);
 		codeObj->Set(String::NewFromUtf8(isolate, "data", String::kInternalizedString), buffer);
 		QRcode_free(code);
 	}
