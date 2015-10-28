@@ -12,7 +12,6 @@
 #include <png.h>
 
 using namespace v8;
-aassss
 
 // for compatibility with libqrencode < 3.2.0:
 #ifndef QRSPEC_VERSION_MAX
