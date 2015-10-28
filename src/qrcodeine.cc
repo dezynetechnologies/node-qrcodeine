@@ -245,7 +245,7 @@ void EncodeBuf(const FunctionCallbackInfo<Value>& args) {
 	if (code) {
 		codeObj->Set(String::NewFromUtf8(isolate, "width", String::kInternalizedString), Integer::New(isolate, code->width));
 		codeObj->Set(String::NewFromUtf8(isolate, "version", String::kInternalizedString), Integer::New(isolate, code->version));
-		Local<Object> buffer = node::Buffer::New(isolate, (char*)code->data, code->width * code->width);
+		Local<Object> buffer = node::Buffer::New(isolate, (char*)code->data, code->width * code->width).ToLocalChecked();
 		codeObj->Set(String::NewFromUtf8(isolate, "data", String::kInternalizedString), buffer);
 		QRcode_free(code);
 	}
