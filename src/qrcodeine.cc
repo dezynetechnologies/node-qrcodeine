@@ -360,7 +360,7 @@ void EncodePNG(const FunctionCallbackInfo<Value>& args) {
 
 		obj->Set(String::NewFromUtf8(isolate, "width", String::kInternalizedString), Integer::New(isolate, code->width));
 		obj->Set(String::NewFromUtf8(isolate, "version", String::kInternalizedString), Integer::New(isolate, code->version));
-		Local<Object> buffer = node::Buffer::New(isolate, bp->data, bp->size);
+		Local<Object> buffer = node::Buffer::New(isolate, bp->data, bp->size).ToLocalChecked();
 		obj->Set(String::NewFromUtf8(isolate, "data", String::kInternalizedString), buffer);
 		QRcode_free(code);
 		delete bp;
